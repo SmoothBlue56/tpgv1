@@ -166,7 +166,7 @@ class TruckPullingManager {
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <div><strong>Distance:</strong> ${result.distance.toFixed(1)} ft</div>
+                    <div><strong>Distance:</strong> ${result.distance.toFixed} ft</div>
                     <div><strong>Country:</strong> ${result.location.country}</div>
                     <div><strong>Prize:</strong> $${result.prize.toLocaleString()}</div>
                 </div>
