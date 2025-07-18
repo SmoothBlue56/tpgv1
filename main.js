@@ -217,4 +217,4 @@ document.head.appendChild(style);
 
 // Initialize the app
 window.app = new TruckPullingManager();
-]]>
+]>
