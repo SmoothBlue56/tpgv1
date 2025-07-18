@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Truck Pulling Game</title>
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .tabs {
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      background: #2d2d2d;
+      color: #d4af37;
+      border: 1px solid #d4af37;
+      padding: 10px 20px;
+      margin-right: 10px;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: #d4af37;
+      color: #1a1a1a;
+    }
+    .main-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+    .panel {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    .section-title {
+      color: #d4af37;
+    }
+    .hidden {
+      display: none;
+    }
+    .standings-table table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .standings-table th, .standings-table td {
+      padding: 8px;
+      border: 1px solid #444;
+    }
+    .player-row {
+      background-color: rgba(74, 222, 128, 0.1);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="tabs">
+    <button class="tab-btn active" id="teamTab">Team Management</button>
+    <button class="tab-btn" id="standingsTab">Standings</button>
+  </div>
+
+  <div class="main-panels">
+    <div id="teamPanel" class="panel">
+      <h2 class="section-title">🚛 Super Mod 2WD #1</h2>
+      <button id="runPullBtn">Start Next Pull</button>
+      <div id="pullResults"></div>
+    </div>
+
+    <div id="standingsPanel" class="panel hidden">
+      <h2 class="section-title">📊 Season Standings</h2>
+      <div class="standings-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Team</th>
+              <th>Truck</th>
+              <th>Points</th>
+              <th>Wins</th>
+            </tr>
+          </thead>
+          <tbody id="standingsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const trucks = [
+      { id: 1, name: "Super Mod 2WD #1", team: "Player Team", points: 0, wins: 0, isPlayer: true },
+    ];
+
+    const teamNames = ["Diesel Demons", "Mud Mavericks", "Track Tyrants"];
+    const truckNames = ["Terminator", "Outlaw", "Reaper"];
+
+    for (let i = 2; i <= 5; i++) {
+      trucks.push({
+        id: i,
+        name: truckNames[Math.floor(Math.random() * truckNames.length)],
+        team: teamNames[Math.floor(Math.random() * teamNames.length)],
+        points: 0,
+        wins: 0,
+        isPlayer: false
+      });
+    }
+
+    function runPull() {
+      const results = trucks.map(truck => ({
+        truck,
+        distance: Math.random() * 300 + 100
+      })).sort((a, b) => b.distance - a.distance);
+
+      results.forEach((r, i) => {
+        const place = i + 1;
+        r.truck.points += (6 - place);
+        if (place === 1) r.truck.wins++;
+      });
+
+      const playerResult = results.find(r => r.truck.isPlayer);
+
+      document.getElementById("pullResults").innerHTML = `
+        <p><strong>Your Pull:</strong> ${playerResult.distance.toFixed(1)} ft</p>
+        <p><strong>Placement:</strong> #${results.findIndex(r => r.truck.isPlayer) + 1}</p>
+      `;
+
+      updateStandings();
+    }
+
+    function updateStandings() {
+      const body = document.getElementById("standingsBody");
+      body.innerHTML = "";
+
+      const sorted = [...trucks].sort((a, b) => b.points - a.points);
+      sorted.forEach((truck, i) => {
+        const row = document.createElement("tr");
+        if (truck.isPlayer) row.classList.add("player-row");
+        row.innerHTML = `
+          <td>${i + 1}</td>
+          <td>${truck.team}</td>
+          <td>${truck.name}</td>
+          <td>${truck.points}</td>
+          <td>${truck.wins}</td>
+        `;
+        body.appendChild(row);
+      });
+    }
+
+    document.getElementById("runPullBtn").addEventListener("click", runPull);
+
+    document.getElementById("teamTab").addEventListener("click", () => {
+      document.getElementById("teamPanel").classList.remove("hidden");
+      document.getElementById("standingsPanel").classList.add("hidden");
+      document.getElementById("teamTab").classList.add("active");
+      document.getElementById("standingsTab").classList.remove("active");
+    });
+
+    document.getElementById("standingsTab").addEventListener("click", () => {
+      document.getElementById("teamPanel").classList.add("hidden");
+      document.getElementById("standingsPanel").classList.remove("hidden");
+      document.getElementById("teamTab").classList.remove("active");
+      document.getElementById("standingsTab").classList.add("active");
+    });
+
+    updateStandings();
+  </script>
+</body>
+</html>

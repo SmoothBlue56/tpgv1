@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truck Pulling Team Manager</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://esm.sh/three@0.160.0?dev",
+          "three/": "https://esm.sh/three@0.160.0&dev/"
+        }
+      }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c1810 0%, #4a3728 50%, #6b4c3a 100%);
+            color: #f0e6d2;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 2px solid #d4af37;
+        }
+
+        .header h1 {
+            color: #d4af37;
+            font-size: 2.5em;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .team-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .cash-display {
+            font-size: 1.5em;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .left-panel, .right-panel {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid #444;
+        }
+
+        .section-title {
+            color: #d4af37;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+        }
+
+        .truck-display {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: #000;
+        }
+
+        .truck-info {
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .component-card {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            transition: all 0.3s ease;
+        }
+
+        .component-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-2px);
+        }
+
+        .component-title {
+            color: #d4af37;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .component-details {
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .wear-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .wear-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80 0%, #fbbf24 50%, #ef4444 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #d4af37 0%, #f6d55c 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .season-pulls {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .pull-result {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #d4af37;
+        }
+
+        .pull-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .location-name {
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .weather-icon {
+            font-size: 1.2em;
+        }
+
+        .placement {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4ade80;
+        }
+
+        .upgrade-shop {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .upgrade-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 600px;
+            border: 2px solid #d4af37;
+        }
+
+        .close {
+            color: #d4af37;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #f6d55c;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏁 Truck Pulling Team Manager</h1>
+            <div class="team-info">
+                <div>
+                    <strong>Team:</strong> <span id="teamName">Thunder Pullers</span>
+                </div>
+                <div class="cash-display">
+                    Cash: $<span id="cashAmount">25000</span>
+                </div>
+                <div>
+                    <strong>Season:</strong> <span id="seasonInfo">Month 1, Pull 1/10</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <h2 class="section-title">🚛 Your Super Mod 2WD Truck</h2>
+                <div class="truck-display" id="truckDisplay"></div>
+                
+                <div class="truck-info">
+                    <h3 style="color: #d4af37; margin-bottom: 10px;">Current Setup</h3>
+                    <div class="components-grid" id="componentsGrid">
+                        <!-- Components will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="upgrade-shop">
+                    <h3 style="color: #d4af37; margin-bottom: 15px;">🔧 Upgrade Shop</h3>
+                    <div id="upgradeList">
+                        <!-- Upgrades will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <h2 class="section-title">🏆 Season Pulls</h2>
+                <div class="text-center" style="margin-bottom: 20px;">
+                    <button class="btn" id="runPullBtn">Start Next Pull</button>
+                    <button class="btn" id="buyTruckBtn">Buy Another Truck ($15,000)</button>
+                </div>
+                
+                <div class="season-pulls" id="seasonPulls">
+                    <div class="pull-result">
+                        <div class="pull-header">
+                            <span class="location-name">🏁 Welcome to the Circuit!</span>
+                            <span class="weather-icon">☀️</span>
+                        </div>
+                        <p style="margin-bottom: 8px;">Get ready to compete in the Super Mod 2WD class!</p>
+                        <p>Click "Start Next Pull" to begin your first competition.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="upgradeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Upgrade Component</h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script type="module" src="main.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/ChatManager.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/ImageGenerator.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/ProgressLogger.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/OGP.js"></script>
+</body>
+</html>
+]]>

@@ -1,0 +1,1178 @@
+<rosieArtifact title="Truck Pulling Team Manager">
+<rosieCreate file="index.html">
+<![CDATA[
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Truck Pulling Team Manager</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://esm.sh/three@0.160.0?dev",
+          "three/": "https://esm.sh/three@0.160.0&dev/"
+        }
+      }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c1810 0%, #4a3728 50%, #6b4c3a 100%);
+            color: #f0e6d2;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 2px solid #d4af37;
+        }
+
+        .header h1 {
+            color: #d4af37;
+            font-size: 2.5em;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .team-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .cash-display {
+            font-size: 1.5em;
+            color: #4ade80;
+            font-weight: bold;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .left-panel, .right-panel {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid #444;
+        }
+
+        .section-title {
+            color: #d4af37;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #d4af37;
+            padding-bottom: 10px;
+        }
+
+        .truck-display {
+            width: 100%;
+            height: 300px;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background: #000;
+        }
+
+        .truck-info {
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .component-card {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            transition: all 0.3s ease;
+        }
+
+        .component-card:hover {
+            border-color: #d4af37;
+            transform: translateY(-2px);
+        }
+
+        .component-title {
+            color: #d4af37;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .component-details {
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .wear-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .wear-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80 0%, #fbbf24 50%, #ef4444 100%);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #d4af37 0%, #f6d55c 100%);
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .season-pulls {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .pull-result {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #d4af37;
+        }
+
+        .pull-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .location-name {
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .weather-icon {
+            font-size: 1.2em;
+        }
+
+        .placement {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #4ade80;
+        }
+
+        .upgrade-shop {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .upgrade-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+        }
+
+        .upgrade-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 80%;
+            max-width: 600px;
+            border: 2px solid #d4af37;
+        }
+
+        .close {
+            color: #d4af37;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #f6d55c;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .components-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏁 Truck Pulling Team Manager</h1>
+            <div class="team-info">
+                <div>
+                    <strong>Team:</strong> <span id="teamName">Thunder Pullers</span>
+                </div>
+                <div class="cash-display">
+                    Cash: $<span id="cashAmount">25000</span>
+                </div>
+                <div>
+                    <strong>Season:</strong> <span id="seasonInfo">Month 1, Pull 1/10</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <h2 class="section-title">🚛 Your Super Mod 2WD Truck</h2>
+                <div class="truck-display" id="truckDisplay"></div>
+                
+                <div class="truck-info">
+                    <h3 style="color: #d4af37; margin-bottom: 10px;">Current Setup</h3>
+                    <div class="components-grid" id="componentsGrid">
+                        <!-- Components will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="upgrade-shop">
+                    <h3 style="color: #d4af37; margin-bottom: 15px;">🔧 Upgrade Shop</h3>
+                    <div id="upgradeList">
+                        <!-- Upgrades will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <h2 class="section-title">🏆 Season Pulls</h2>
+                <div class="text-center" style="margin-bottom: 20px;">
+                    <button class="btn" id="runPullBtn">Start Next Pull</button>
+                    <button class="btn" id="buyTruckBtn">Buy Another Truck ($15,000)</button>
+                </div>
+                
+                <div class="season-pulls" id="seasonPulls">
+                    <div class="pull-result">
+                        <div class="pull-header">
+                            <span class="location-name">🏁 Welcome to the Circuit!</span>
+                            <span class="weather-icon">☀️</span>
+                        </div>
+                        <p style="margin-bottom: 8px;">Get ready to compete in the Super Mod 2WD class!</p>
+                        <p>Click "Start Next Pull" to begin your first competition.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="upgradeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Upgrade Component</h2>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script type="module" src="main.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/ChatManager.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/ImageGenerator.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/ProgressLogger.js"></script>
+    <script src="https://storage.googleapis.com/rosebud_staticfiles/OGP.js"></script>
+</body>
+</html>
+]]>
+</rosieCreate>
+<rosieCreate file="main.js">
+<![CDATA[
+import { GameManager } from './gameManager.js';
+import { TruckRenderer } from './truckRenderer.js';
+
+class TruckPullingManager {
+    constructor() {
+        this.gameManager = new GameManager();
+        this.truckRenderer = new TruckRenderer();
+        this.init();
+    }
+
+    init() {
+        this.setupEventListeners();
+        this.updateDisplay();
+        this.renderTruck();
+    }
+
+    setupEventListeners() {
+        document.getElementById('runPullBtn').addEventListener('click', () => {
+            this.runPull();
+        });
+
+        document.getElementById('buyTruckBtn').addEventListener('click', () => {
+            this.buyTruck();
+        });
+
+        // Modal events
+        const modal = document.getElementById('upgradeModal');
+        const closeBtn = document.querySelector('.close');
+        
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+    updateDisplay() {
+        // Update cash
+        document.getElementById('cashAmount').textContent = this.gameManager.cash.toLocaleString();
+        
+        // Update season info
+        const seasonInfo = `Month ${this.gameManager.currentMonth}, Pull ${this.gameManager.currentPull}/10`;
+        document.getElementById('seasonInfo').textContent = seasonInfo;
+
+        // Update components
+        this.updateComponentsDisplay();
+        this.updateUpgradeShop();
+    }
+
+    updateComponentsDisplay() {
+        const grid = document.getElementById('componentsGrid');
+        const truck = this.gameManager.getCurrentTruck();
+        
+        grid.innerHTML = '';
+        
+        Object.entries(truck.components).forEach(([type, component]) => {
+            const card = document.createElement('div');
+            card.className = 'component-card';
+            
+            const wearColor = component.wear < 25 ? '#4ade80' : 
+                             component.wear < 50 ? '#fbbf24' : 
+                             component.wear < 75 ? '#f97316' : '#ef4444';
+            
+            card.innerHTML = `
+                <div class="component-title">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                <div class="component-details">
+                    <div><strong>${component.name}</strong></div>
+                    <div>Power: ${component.power}</div>
+                    <div>Reliability: ${component.reliability}</div>
+                    <div class="wear-bar">
+                        <div class="wear-fill" style="width: ${component.wear}%; background-color: ${wearColor}"></div>
+                    </div>
+                    <div style="font-size: 0.8em; margin-top: 4px;">Wear: ${component.wear.toFixed(1)}%</div>
+                </div>
+            `;
+            
+            grid.appendChild(card);
+        });
+    }
+
+    updateUpgradeShop() {
+        const upgradeList = document.getElementById('upgradeList');
+        upgradeList.innerHTML = '';
+        
+        Object.entries(this.gameManager.upgradeShop).forEach(([type, upgrades]) => {
+            const currentLevel = this.gameManager.getCurrentTruck().components[type].level;
+            const nextUpgrade = upgrades.find(u => u.level === currentLevel + 1);
+            
+            if (nextUpgrade) {
+                const item = document.createElement('div');
+                item.className = 'upgrade-item';
+                
+                const canAfford = this.gameManager.cash >= nextUpgrade.cost;
+                
+                item.innerHTML = `
+                    <div>
+                        <strong>${nextUpgrade.name}</strong><br>
+                        <small>Power: ${nextUpgrade.power} | Reliability: ${nextUpgrade.reliability}</small>
+                    </div>
+                    <button class="btn ${canAfford ? '' : 'disabled'}" 
+                            onclick="app.buyUpgrade('${type}', ${nextUpgrade.level})"
+                            ${canAfford ? '' : 'disabled'}>
+                        $${nextUpgrade.cost.toLocaleString()}
+                    </button>
+                `;
+                
+                upgradeList.appendChild(item);
+            }
+        });
+    }
+
+    buyUpgrade(type, level) {
+        const result = this.gameManager.buyUpgrade(type, level);
+        if (result.success) {
+            this.updateDisplay();
+            this.renderTruck();
+            this.showNotification(`Upgraded ${type}!`, 'success');
+        } else {
+            this.showNotification(result.message, 'error');
+        }
+    }
+
+    runPull() {
+        const result = this.gameManager.runPull();
+        this.displayPullResult(result);
+        this.updateDisplay();
+    }
+
+    buyTruck() {
+        const result = this.gameManager.buyTruck();
+        if (result.success) {
+            this.updateDisplay();
+            this.renderTruck();
+            this.showNotification('New truck purchased!', 'success');
+        } else {
+            this.showNotification(result.message, 'error');
+        }
+    }
+
+    displayPullResult(result) {
+        const pullsContainer = document.getElementById('seasonPulls');
+        
+        const pullDiv = document.createElement('div');
+        pullDiv.className = 'pull-result';
+        pullDiv.style.animation = 'slideIn 0.5s ease-out';
+        
+        const weatherIcons = {
+            sunny: '☀️',
+            cloudy: '☁️',
+            rainy: '🌧️',
+            hot: '🔥',
+            cold: '❄️'
+        };
+        
+        const placementColor = result.placement <= 3 ? '#4ade80' : 
+                              result.placement <= 6 ? '#fbbf24' : '#ef4444';
+        
+        pullDiv.innerHTML = `
+            <div class="pull-header">
+                <span class="location-name">${result.location.name}</span>
+                <span class="weather-icon">${weatherIcons[result.weather]}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div><strong>Distance:</strong> ${result.distance.toFixed(1)} ft</div>
+                    <div><strong>Country:</strong> ${result.location.country}</div>
+                    <div><strong>Prize:</strong> $${result.prize.toLocaleString()}</div>
+                </div>
+                <div class="placement" style="color: ${placementColor};">
+                    #${result.placement}
+                </div>
+            </div>
+            ${result.componentFailures.length > 0 ? 
+                `<div style="color: #ef4444; margin-top: 10px;">
+                    <strong>⚠️ Component Failures:</strong><br>
+                    ${result.componentFailures.join('<br>')}
+                </div>` : ''}
+        `;
+        
+        pullsContainer.insertBefore(pullDiv, pullsContainer.firstChild);
+        
+        // Limit to 10 results
+        while (pullsContainer.children.length > 10) {
+            pullsContainer.removeChild(pullsContainer.lastChild);
+        }
+    }
+
+    renderTruck() {
+        this.truckRenderer.render(this.gameManager.getCurrentTruck());
+    }
+
+    showNotification(message, type = 'info') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+}
+
+// Add CSS animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(-100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+`;
+document.head.appendChild(style);
+
+// Initialize the app
+window.app = new TruckPullingManager();
+]]>
+</rosieCreate>
+<rosieCreate file="gameManager.js">
+<![CDATA[
+import { PullLocations } from './pullLocations.js';
+import { ComponentData } from './componentData.js';
+
+export class GameManager {
+    constructor() {
+        this.cash = 25000;
+        this.currentMonth = 1;
+        this.currentPull = 1;
+        this.trucks = [this.createDefaultTruck()];
+        this.currentTruckIndex = 0;
+        this.pullLocations = new PullLocations();
+        this.componentData = new ComponentData();
+        this.upgradeShop = this.componentData.getUpgradeShop();
+        this.weatherTypes = ['sunny', 'cloudy', 'rainy', 'hot', 'cold'];
+    }
+
+    createDefaultTruck() {
+        return {
+            id: 1,
+            name: 'Super Mod 2WD #1',
+            components: {
+                engine: {
+                    name: 'Basic V8',
+                    level: 1,
+                    power: 450,
+                    reliability: 70,
+                    wear: 0
+                },
+                tires: {
+                    name: 'Standard Pulling Tires',
+                    level: 1,
+                    power: 60,
+                    reliability: 80,
+                    wear: 0,
+                    weatherPreference: { sunny: 80, cloudy: 75, rainy: 40, hot: 70, cold: 60 }
+                },
+                chassis: {
+                    name: 'Basic Frame',
+                    level: 1,
+                    power: 40,
+                    reliability: 85,
+                    wear: 0
+                },
+                transfer: {
+                    name: 'Stock Transfer Case',
+                    level: 1,
+                    power: 35,
+                    reliability: 90,
+                    wear: 0,
+                    ratio: 2.5
+                }
+            },
+            totalPulls: 0
+        };
+    }
+
+    getCurrentTruck() {
+        return this.trucks[this.currentTruckIndex];
+    }
+
+    buyUpgrade(componentType, level) {
+        const upgrade = this.upgradeShop[componentType].find(u => u.level === level);
+        if (!upgrade) {
+            return { success: false, message: 'Upgrade not found' };
+        }
+
+        if (this.cash < upgrade.cost) {
+            return { success: false, message: 'Insufficient funds' };
+        }
+
+        this.cash -= upgrade.cost;
+        const truck = this.getCurrentTruck();
+        truck.components[componentType] = {
+            ...upgrade,
+            wear: 0
+        };
+
+        return { success: true };
+    }
+
+    buyTruck() {
+        const cost = 15000;
+        if (this.cash < cost) {
+            return { success: false, message: 'Insufficient funds' };
+        }
+
+        this.cash -= cost;
+        const newTruck = this.createDefaultTruck();
+        newTruck.id = this.trucks.length + 1;
+        newTruck.name = `Super Mod 2WD #${newTruck.id}`;
+        this.trucks.push(newTruck);
+
+        return { success: true };
+    }
+
+    runPull() {
+        const location = this.pullLocations.getRandomLocation();
+        const weather = this.weatherTypes[Math.floor(Math.random() * this.weatherTypes.length)];
+        const truck = this.getCurrentTruck();
+
+        // Apply wear before the pull
+        this.applyWear(truck);
+
+        // Calculate performance
+        const performance = this.calculatePerformance(truck, location, weather);
+        
+        // Determine placement (1-20 competitors)
+        const placement = this.calculatePlacement(performance);
+        
+        // Calculate prize money
+        const prize = this.calculatePrize(placement);
+        this.cash += prize;
+
+        // Calculate distance pulled
+        const distance = this.calculateDistance(performance, location);
+
+        // Check for component failures
+        const componentFailures = this.checkComponentFailures(truck);
+
+        // Update season progress
+        this.currentPull++;
+        if (this.currentPull > 10) {
+            this.currentPull = 1;
+            this.currentMonth++;
+        }
+
+        truck.totalPulls++;
+
+        return {
+            location,
+            weather,
+            placement,
+            prize,
+            distance,
+            componentFailures,
+            performance
+        };
+    }
+
+    calculatePerformance(truck, location, weather) {
+        let totalPower = 0;
+        let totalReliability = 0;
+        let componentCount = 0;
+
+        Object.entries(truck.components).forEach(([type, component]) => {
+            // Reduce performance based on wear
+            const wearFactor = Math.max(0.1, 1 - (component.wear / 100));
+            
+            let adjustedPower = component.power * wearFactor;
+            let adjustedReliability = component.reliability * wearFactor;
+
+            // Special handling for tires and weather
+            if (type === 'tires' && component.weatherPreference) {
+                const weatherBonus = component.weatherPreference[weather] / 100;
+                adjustedPower *= weatherBonus;
+            }
+
+            // Special handling for transfer case and track ratio
+            if (type === 'transfer') {
+                const ratioMatch = Math.abs(component.ratio - location.optimalRatio);
+                const ratioBonus = Math.max(0.7, 1 - (ratioMatch * 0.1));
+                adjustedPower *= ratioBonus;
+            }
+
+            totalPower += adjustedPower;
+            totalReliability += adjustedReliability;
+            componentCount++;
+        });
+
+        const basePerformance = (totalPower + totalReliability) / componentCount;
+        
+        // Add randomness (±10%)
+        const randomFactor = 0.9 + (Math.random() * 0.2);
+        
+        return basePerformance * randomFactor;
+    }
+
+    calculatePlacement(performance) {
+        // Performance ranges from ~150-800+
+        // Higher performance = better placement
+        const normalizedPerformance = Math.max(0, Math.min(1, (performance - 150) / 650));
+        
+        // Use inverse exponential distribution for more realistic placement
+        const randomFactor = Math.random();
+        const placement = Math.ceil((1 - Math.pow(normalizedPerformance, 2)) * 19 * randomFactor + 1);
+        
+        return Math.max(1, Math.min(20, placement));
+    }
+
+    calculatePrize(placement) {
+        const prizes = {
+            1: 5000, 2: 3500, 3: 2500, 4: 2000, 5: 1500,
+            6: 1200, 7: 1000, 8: 800, 9: 600, 10: 500
+        };
+        
+        return prizes[placement] || 300 + Math.floor(Math.random() * 200);
+    }
+
+    calculateDistance(performance, location) {
+        // Base distance calculation
+        const baseDistance = 200 + (performance / 3);
+        
+        // Add track variation
+        const trackVariation = location.difficulty * 50;
+        
+        return Math.max(50, baseDistance - trackVariation + (Math.random() * 100 - 50));
+    }
+
+    applyWear(truck) {
+        Object.entries(truck.components).forEach(([type, component]) => {
+            if (component.wear < 100) {
+                const wearAmount = 1 + (Math.random() * 4); // 1-5% wear per pull
+                component.wear = Math.min(100, component.wear + wearAmount);
+            }
+        });
+    }
+
+    checkComponentFailures(truck) {
+        const failures = [];
+        
+        Object.entries(truck.components).forEach(([type, component]) => {
+            if (component.wear >= 100) {
+                failures.push(`${component.name} blew up due to wear!`);
+                // Replace with basic component
+                const basicComponent = this.componentData.getBasicComponent(type);
+                truck.components[type] = { ...basicComponent, wear: 0 };
+            }
+        });
+
+        return failures;
+    }
+}
+]]>
+</rosieCreate>
+<rosieCreate file="pullLocations.js">
+<![CDATA[
+export class PullLocations {
+    constructor() {
+        this.locations = [
+            // United States
+            { name: "Bowling Green, OH", country: "USA", optimalRatio: 3.2, difficulty: 0.8 },
+            { name: "Tomah, WI", country: "USA", optimalRatio: 2.8, difficulty: 0.6 },
+            { name: "Dearborn, MI", country: "USA", optimalRatio: 3.0, difficulty: 0.7 },
+            { name: "Louisville, KY", country: "USA", optimalRatio: 2.9, difficulty: 0.5 },
+            { name: "Shelbyville, IN", country: "USA", optimalRatio: 3.1, difficulty: 0.6 },
+            { name: "Woodstock, IL", country: "USA", optimalRatio: 2.7, difficulty: 0.4 },
+            { name: "Hillsdale, MI", country: "USA", optimalRatio: 3.3, difficulty: 0.9 },
+            { name: "Wauseon, OH", country: "USA", optimalRatio: 3.0, difficulty: 0.7 },
+            { name: "Indy State Fair, IN", country: "USA", optimalRatio: 2.8, difficulty: 0.5 },
+            { name: "Champaign, IL", country: "USA", optimalRatio: 3.2, difficulty: 0.8 },
+            
+            // Canada
+            { name: "Tavistock, ON", country: "Canada", optimalRatio: 2.9, difficulty: 0.6 },
+            { name: "Bright, ON", country: "Canada", optimalRatio: 3.1, difficulty: 0.7 },
+            { name: "Alma, ON", country: "Canada", optimalRatio: 2.8, difficulty: 0.5 },
+            { name: "Williamsburg, ON", country: "Canada", optimalRatio: 3.0, difficulty: 0.6 },
+            { name: "Metcalfe, ON", country: "Canada", optimalRatio: 3.2, difficulty: 0.8 },
+            { name: "Elmvale, ON", country: "Canada", optimalRatio: 2.7, difficulty: 0.4 },
+            { name: "Woodstock, ON", country: "Canada", optimalRatio: 3.3, difficulty: 0.9 },
+            { name: "Renfrew, ON", country: "Canada", optimalRatio: 2.9, difficulty: 0.6 },
+            
+            // Netherlands
+            { name: "Eext", country: "Netherlands", optimalRatio: 3.4, difficulty: 1.0 },
+            { name: "Boekel", country: "Netherlands", optimalRatio: 3.1, difficulty: 0.8 },
+            { name: "Deurne", country: "Netherlands", optimalRatio: 3.0, difficulty: 0.7 },
+            { name: "Haaksbergen", country: "Netherlands", optimalRatio: 3.2, difficulty: 0.9 },
+            { name: "Borculo", country: "Netherlands", optimalRatio: 2.9, difficulty: 0.6 },
+            { name: "Ter Apel", country: "Netherlands", optimalRatio: 3.3, difficulty: 0.8 },
+            
+            // Germany
+            { name: "Füchtorf", country: "Germany", optimalRatio: 3.5, difficulty: 1.1 },
+            { name: "Mühlen", country: "Germany", optimalRatio: 3.2, difficulty: 0.9 },
+            { name: "Edewecht", country: "Germany", optimalRatio: 3.1, difficulty: 0.8 },
+            { name: "Lüchow", country: "Germany", optimalRatio: 3.4, difficulty: 1.0 },
+            { name: "Bernkastel", country: "Germany", optimalRatio: 3.0, difficulty: 0.7 },
+            { name: "Ahlen", country: "Germany", optimalRatio: 3.3, difficulty: 0.9 }
+        ];
+    }
+
+    getRandomLocation() {
+        return this.locations[Math.floor(Math.random() * this.locations.length)];
+    }
+
+    getAllLocations() {
+        return this.locations;
+    }
+
+    getLocationsByCountry(country) {
+        return this.locations.filter(loc => loc.country === country);
+    }
+}
+]]>
+</rosieCreate>
+<rosieCreate file="componentData.js">
+<![CDATA[
+export class ComponentData {
+    constructor() {
+        this.components = {
+            engine: [
+                { name: 'Basic V8', level: 1, power: 450, reliability: 70, cost: 0 },
+                { name: 'Modified V8', level: 2, power: 550, reliability: 65, cost: 8000 },
+                { name: 'Racing V8', level: 3, power: 650, reliability: 60, cost: 15000 },
+                { name: 'Pro Stock V8', level: 4, power: 750, reliability: 55, cost: 25000 },
+                { name: 'Blown Alcohol V8', level: 5, power: 900, reliability: 45, cost: 40000 },
+                { name: 'Nitrous V8', level: 6, power: 1050, reliability: 40, cost: 60000 },
+                { name: 'Twin Turbo V8', level: 7, power: 1200, reliability: 35, cost: 85000 }
+            ],
+            tires: [
+                { 
+                    name: 'Standard Pulling Tires', level: 1, power: 60, reliability: 80, cost: 0,
+                    weatherPreference: { sunny: 80, cloudy: 75, rainy: 40, hot: 70, cold: 60 }
+                },
+                { 
+                    name: 'Aggressive Lug Tires', level: 2, power: 75, reliability: 75, cost: 2500,
+                    weatherPreference: { sunny: 85, cloudy: 80, rainy: 65, hot: 75, cold: 70 }
+                },
+                { 
+                    name: 'Terra Grip Tires', level: 3, power: 90, reliability: 70, cost: 5000,
+                    weatherPreference: { sunny: 90, cloudy: 85, rainy: 75, hot: 80, cold: 65 }
+                },
+                { 
+                    name: 'Firestone Puller 2000', level: 4, power: 110, reliability: 65, cost: 8000,
+                    weatherPreference: { sunny: 95, cloudy: 90, rainy: 70, hot: 85, cold: 75 }
+                },
+                { 
+                    name: 'Michelin Tractor Pull', level: 5, power: 130, reliability: 60, cost: 12000,
+                    weatherPreference: { sunny: 100, cloudy: 95, rainy: 85, hot: 90, cold: 80 }
+                },
+                { 
+                    name: 'Goodyear LSW SuperSingle', level: 6, power: 150, reliability: 55, cost: 18000,
+                    weatherPreference: { sunny: 105, cloudy: 100, rainy: 90, hot: 95, cold: 85 }
+                }
+            ],
+            chassis: [
+                { name: 'Basic Frame', level: 1, power: 40, reliability: 85, cost: 0 },
+                { name: 'Reinforced Frame', level: 2, power: 55, reliability: 80, cost: 5000 },
+                { name: 'Chromoly Frame', level: 3, power: 70, reliability: 75, cost: 10000 },
+                { name: 'Tube Frame', level: 4, power: 90, reliability: 70, cost: 18000 },
+                { name: 'Carbon Fiber Frame', level: 5, power: 115, reliability: 65, cost: 30000 },
+                { name: 'Titanium Frame', level: 6, power: 140, reliability: 60, cost: 50000 }
+            ],
+            transfer: [
+                { name: 'Stock Transfer Case', level: 1, power: 35, reliability: 90, cost: 0, ratio: 2.5 },
+                { name: 'Heavy Duty Transfer', level: 2, power: 45, reliability: 85, cost: 3000, ratio: 2.8 },
+                { name: 'Competition Transfer', level: 3, power: 60, reliability: 80, cost: 6000, ratio: 3.0 },
+                { name: 'Pro Series Transfer', level: 4, power: 80, reliability: 75, cost: 12000, ratio: 3.2 },
+                { name: 'Ultra Low Gear Transfer', level: 5, power: 100, reliability: 70, cost: 20000, ratio: 3.5 },
+                { name: 'Planetary Gear Transfer', level: 6, power: 125, reliability: 65, cost: 35000, ratio: 4.0 }
+            ]
+        };
+    }
+
+    getUpgradeShop() {
+        return this.components;
+    }
+
+    getBasicComponent(type) {
+        return { ...this.components[type][0] };
+    }
+
+    getComponent(type, level) {
+        return this.components[type].find(comp => comp.level === level);
+    }
+
+    getAllComponents() {
+        return this.components;
+    }
+}
+]]>
+</rosieCreate>
+<rosieCreate file="truckRenderer.js">
+<![CDATA[
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+export class TruckRenderer {
+    constructor() {
+        this.scene = null;
+        this.camera = null;
+        this.renderer = null;
+        this.truckModel = null;
+        this.loader = new GLTFLoader();
+        this.container = document.getElementById('truckDisplay');
+        this.init();
+    }
+
+    init() {
+        // Create scene
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x1a1a1a);
+
+        // Create camera
+        this.camera = new THREE.PerspectiveCamera(75, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
+        this.camera.position.set(5, 3, 5);
+        this.camera.lookAt(0, 0, 0);
+
+        // Create renderer
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.2;
+        
+        this.container.appendChild(this.renderer.domElement);
+
+        // Setup lighting
+        this.setupLighting();
+        
+        // Load truck model
+        this.loadTruckModel();
+
+        // Setup animation loop
+        this.animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => this.handleResize());
+    }
+
+    setupLighting() {
+        // Ambient light
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.6);
+        this.scene.add(ambientLight);
+
+        // Main directional light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        directionalLight.position.set(10, 10, 5);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        this.scene.add(directionalLight);
+
+        // Fill light
+        const fillLight = new THREE.DirectionalLight(0x87ceeb, 0.4);
+        fillLight.position.set(-5, 3, -5);
+        this.scene.add(fillLight);
+
+        // Spotlight for dramatic effect
+        const spotLight = new THREE.SpotLight(0xd4af37, 0.8, 30, Math.PI / 6, 0.1, 2);
+        spotLight.position.set(0, 8, 8);
+        spotLight.target.position.set(0, 0, 0);
+        this.scene.add(spotLight);
+        this.scene.add(spotLight.target);
+
+        // Ground plane
+        const groundGeometry = new THREE.PlaneGeometry(20, 20);
+        const groundMaterial = new THREE.MeshLambertMaterial({ 
+            color: 0x3a2817,
+            transparent: true,
+            opacity: 0.8
+        });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -1;
+        ground.receiveShadow = true;
+        this.scene.add(ground);
+    }
+
+    loadTruckModel() {
+        // Use the Tank model from the assets as a placeholder truck
+        this.loader.load(
+            'https://play.rosebud.ai/assets/Tank-Cw3Zvvkmom.glb?njoi',
+            (gltf) => {
+                this.truckModel = gltf.scene;
+                this.truckModel.scale.set(1.5, 1.5, 1.5);
+                this.truckModel.position.set(0, -0.5, 0);
+                
+                // Enable shadows
+                this.truckModel.traverse((child) => {
+                    if (child.isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                        
+                        // Enhance materials
+                        if (child.material) {
+                            child.material.metalness = 0.7;
+                            child.material.roughness = 0.3;
+                        }
+                    }
+                });
+
+                this.scene.add(this.truckModel);
+                this.updateTruckColors();
+            },
+            (progress) => {
+                console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
+            },
+            (error) => {
+                console.error('Error loading truck model:', error);
+                this.createFallbackTruck();
+            }
+        );
+    }
+
+    createFallbackTruck() {
+        // Create a simple truck shape if model loading fails
+        const group = new THREE.Group();
+        
+        // Main body
+        const bodyGeometry = new THREE.BoxGeometry(3, 1, 1.5);
+        const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        body.position.y = 0.5;
+        body.castShadow = true;
+        group.add(body);
+
+        // Wheels
+        const wheelGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.3, 16);
+        const wheelMaterial = new THREE.MeshPhongMaterial({ color: 0x333333 });
+        
+        const positions = [
+            [-1.2, 0, 0.9],
+            [1.2, 0, 0.9],
+            [-1.2, 0, -0.9],
+            [1.2, 0, -0.9]
+        ];
+        
+        positions.forEach(pos => {
+            const wheel = new THREE.Mesh(wheelGeometry, wheelMaterial);
+            wheel.position.set(pos[0], pos[1], pos[2]);
+            wheel.rotation.z = Math.PI / 2;
+            wheel.castShadow = true;
+            group.add(wheel);
+        });
+
+        this.truckModel = group;
+        this.scene.add(this.truckModel);
+    }
+
+    updateTruckColors() {
+        if (!this.truckModel) return;
+
+        // Update truck appearance based on components
+        // This is a simplified version - in a full game, you'd have different models/textures
+        this.truckModel.traverse((child) => {
+            if (child.isMesh && child.material) {
+                // Vary the color slightly based on upgrade level
+                const hue = Math.random() * 0.1;
+                child.material.color.setHSL(0.1 + hue, 0.6, 0.4);
+            }
+        });
+    }
+
+    render(truck) {
+        // Update visual representation based on truck data
+        this.updateTruckColors();
+        
+        // You could add visual indicators for component conditions here
+        // For example, smoke effects for high wear, different colors for different upgrade levels
+    }
+
+    animate() {
+        requestAnimationFrame(() => this.animate());
+        
+        // Rotate the truck slowly
+        if (this.truckModel) {
+            this.truckModel.rotation.y += 0.005;
+        }
+        
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    handleResize() {
+        const width = this.container.clientWidth;
+        const height = this.container.clientHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(width, height);
+    }
+
+    destroy() {
+        if (this.renderer) {
+            this.container.removeChild(this.renderer.domElement);
+            this.renderer.dispose();
+        }
+        
+        window.removeEventListener('resize', this.handleResize);
+    }
+}
+]]>
+</rosieCreate>
+</rosieArtifact>
